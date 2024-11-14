@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Stock Price Prediction</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Stock Price Prediction</h1>
+        <form action="/predict" method="POST" onsubmit="event.preventDefault(); makePrediction();">
+            <label for="Open">Open:</label>
+            <input type="number" name="Open" id="Open" required>
+            <label for="High">High:</label>
+            <input type="number" name="High" id="High" required>
+            <label for="Low">Low:</label>
+            <input type="number" name="Low" id="Low" required>
+            <label for="Volume">Volume:</label>
+            <input type="number" name="Volume" id="Volume" required>
+            <button type="submit">Predict</button>
+        </form>
+        <div class="output-field">
+            <p id="result">Not predicted anything.</p>
+        </div>
+    </div>
+    <script>
+        function makePrediction() {
+            const formData = {
+                Open: document.getElementById('Open').value,
+                High: document.getElementById('High').value,
+                Low: document.getElementById('Low').value,
+                Volume: document.getElementById('Volume').value
+            };
+            fetch('http://127.0.0.1:5000/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerText = 'Close: ' + data.predictions[0].toFixed(2);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
